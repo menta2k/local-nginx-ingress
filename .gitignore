@@ -1,0 +1,101 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/local-nginx-ingress
+/local-nginx-ingress-*
+
+# Test binary
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+coverage.out
+coverage.txt
+coverage.html
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# IDE directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Logs
+*.log
+logs/
+
+# Build artifacts
+dist/
+build/
+output/
+bin/
+
+# Test outputs and artifacts
+testdata/output/
+test-output/
+*.test.out
+
+# Configuration files (if they contain secrets)
+config.local.yaml
+config.local.yml
+secrets.yaml
+secrets.yml
+.env
+.env.local
+
+# Backup files
+*.bak
+*.backup
+
+# Archive files
+*.tar
+*.tar.gz
+*.zip
+*.rar
+
+# Documentation build outputs
+docs/_build/
+site/
+
+# Cache directories
+.cache/
+.go-cache/
+
+# Development verification files
+verify-deps.go
+
+# Release notes
+release_notes.md
+
+# Local development files
+local/
+scratch/
+playground/
+
+verify-deps.go
