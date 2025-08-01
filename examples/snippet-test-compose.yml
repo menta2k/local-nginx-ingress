@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # Nginx Ingress Controller
+  nginx-ingress:
+    build: 
+      context: ..
+      dockerfile: Dockerfile
+    container_name: nginx-ingress-controller
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NGINX_CONFIG_PATH=/etc/nginx/conf.d/docker-ingress.conf
+      - SNIPPET_CACHE_DIR=/tmp/nginx-ingress-snippets
+    networks:
+      - nginx-ingress
+    restart: unless-stopped
+
+  # Test API with snippets
+  advanced-api:
+    image: nginx:alpine
+    container_name: advanced-api-demo
+    volumes:
+      - ./snippets:/app/config:ro
+      - ./api-content:/usr/share/nginx/html:ro
+    labels:
+      - "nginx.ingress.enable=true"
+      - "nginx.ingress.host=advanced-api.local"
+      - "nginx.ingress.port=80"
+      - "nginx.ingress.path=/api/v2"
+      - "nginx.ingress.configuration-snippet=/app/config/location.conf"
+      - "nginx.ingress.server-snippet=/app/config/server.conf"
+    networks:
+      - nginx-ingress
+    restart: unless-stopped
+
+  # Simple API without snippets for comparison
+  simple-api:
+    image: nginx:alpine
+    container_name: simple-api-demo
+    volumes:
+      - ./api-content:/usr/share/nginx/html:ro
+    labels:
+      - "nginx.ingress.enable=true"
+      - "nginx.ingress.host=simple-api.local"
+      - "nginx.ingress.port=80"
+      - "nginx.ingress.path=/api"
+    networks:
+      - nginx-ingress
+    restart: unless-stopped
+
+  # CORS-enabled API with snippets
+  cors-api:
+    image: nginx:alpine
+    container_name: cors-api-demo
+    volumes:
+      - ./snippets:/app/config:ro
+      - ./api-content:/usr/share/nginx/html:ro
+    labels:
+      - "nginx.ingress.enable=true"
+      - "nginx.ingress.host=cors-api.local"
+      - "nginx.ingress.port=80"
+      - "nginx.ingress.path=/api/v1"
+      - "nginx.ingress.cors=true"
+      - "nginx.ingress.cors.origins=*"
+      - "nginx.ingress.cors.methods=GET,POST,PUT,DELETE,OPTIONS"
+      - "nginx.ingress.configuration-snippet=/app/config/cors-location.conf"
+      - "nginx.ingress.server-snippet=/app/config/cors-server.conf"
+    networks:
+      - nginx-ingress
+    restart: unless-stopped
+
+networks:
+  nginx-ingress:
+    driver: bridge

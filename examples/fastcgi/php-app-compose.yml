@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  # Nginx Ingress Controller
+  nginx-ingress:
+    image: local-nginx-ingress:latest
+    container_name: nginx-ingress-controller
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NGINX_CONFIG_PATH=/etc/nginx/conf.d/docker-ingress.conf
+      - SNIPPET_CACHE_DIR=/tmp/nginx-ingress-snippets
+    networks:
+      - nginx-ingress
+    restart: unless-stopped
+
+  # PHP-FPM Application with FastCGI
+  php-app:
+    image: php:8.2-fpm-alpine
+    container_name: php-app-demo
+    volumes:
+      - ./php-content:/var/www/html:ro
+    labels:
+      - "nginx.ingress.enable=true"
+      - "nginx.ingress.host=php-app.local"
+      - "nginx.ingress.backend-protocol=FCGI"
+      - "nginx.ingress.port=9000"
+      - "nginx.ingress.path=/"
+      - "nginx.ingress.fastcgi-index=index.php"
+      - "nginx.ingress.fastcgi-params=SCRIPT_FILENAME=/var/www/html/index.php,DOCUMENT_ROOT=/var/www/html"
+    networks:
+      - nginx-ingress
+    restart: unless-stopped
+
+  # Alternative PHP app with label-based parameters
+  simple-php:
+    image: php:8.2-fpm-alpine
+    container_name: simple-php-demo
+    volumes:
+      - ./simple-php:/var/www/html:ro
+    labels:
+      - "nginx.ingress.enable=true"
+      - "nginx.ingress.host=simple-php.local"
+      - "nginx.ingress.backend-protocol=FCGI"
+      - "nginx.ingress.port=9000"
+      - "nginx.ingress.path=/"
+      - "nginx.ingress.fastcgi-index=index.php"
+      - "nginx.ingress.fastcgi-params=SCRIPT_FILENAME=/var/www/html$$fastcgi_script_name,DOCUMENT_ROOT=/var/www/html"
+    networks:
+      - nginx-ingress
+    restart: unless-stopped
+
+  # Database for PHP apps
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=myapp
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=apppass
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - nginx-ingress
+    restart: unless-stopped
+
+  # Regular HTTP app for comparison
+  regular-app:
+    image: nginx:alpine
+    container_name: regular-app-demo
+    volumes:
+      - ./regular-content:/usr/share/nginx/html:ro
+    labels:
+      - "nginx.ingress.enable=true"
+      - "nginx.ingress.host=regular-app.local"
+      - "nginx.ingress.port=80"
+      - "nginx.ingress.path=/"
+    networks:
+      - nginx-ingress
+    restart: unless-stopped
+
+networks:
+  nginx-ingress:
+    driver: bridge
+
+volumes:
+  db_data:

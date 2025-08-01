@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # Nginx Ingress Controller
+  nginx-ingress:
+    image: local-nginx-ingress:latest
+    container_name: nginx-ingress-test
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./test-configs:/etc/nginx/conf.d
+    environment:
+      - NGINX_CONFIG_PATH=/etc/nginx/conf.d/docker-ingress.conf
+      - SNIPPET_CACHE_DIR=/tmp/nginx-ingress-snippets
+    networks:
+      - nginx-ingress
+    restart: unless-stopped
+
+  # Simple test app
+  test-app:
+    image: nginx:alpine
+    container_name: test-app-demo
+    volumes:
+      - ./examples/api-content:/usr/share/nginx/html:ro
+    labels:
+      - "nginx.ingress.enable=true"
+      - "nginx.ingress.host=test-app.local"
+      - "nginx.ingress.port=80"
+      - "nginx.ingress.path=/test"
+    networks:
+      - nginx-ingress
+    restart: unless-stopped
+
+networks:
+  nginx-ingress:
+    driver: bridge

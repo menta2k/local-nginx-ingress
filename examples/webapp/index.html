@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web App - Nginx Ingress Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        .info {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .code {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🌐</div>
+        <div class="title">Web Application</div>
+        <div class="subtitle">Served via Local Nginx Ingress Controller</div>
+        
+        <div class="info">
+            <h3>Configuration</h3>
+            <div class="code">nginx.ingress.enable=true</div>
+            <div class="code">nginx.ingress.host=webapp.local</div>
+            <div class="code">nginx.ingress.port=80</div>
+            <div class="code">nginx.ingress.path=/</div>
+        </div>
+        
+        <div class="info">
+            <h3>Access Information</h3>
+            <p><strong>URL:</strong> http://webapp.local</p>
+            <p><strong>Service:</strong> Main Web Application</p>
+            <p><strong>Status:</strong> ✅ Active</p>
+        </div>
+    </div>
+</body>
+</html>

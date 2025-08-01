@@ -1,0 +1,70 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+local-nginx-ingress
+
+# Test files
+*.test
+
+# Go workspace files
+go.work
+go.work.sum
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Documentation
+*.md
+!README.md
+
+# Git
+.git/
+.gitignore
+
+# Docker
+.dockerignore
+Dockerfile*
+docker-compose*.yml
+
+# SSL certificates (will be generated at runtime)
+ssl/
+*.crt
+*.key
+*.pem
+
+# Auth files
+auth/
+.htpasswd
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Node modules (if any frontend tooling)
+node_modules/
+
+# Python cache (if any Python tooling)
+__pycache__/
+*.py[cod]
+*$py.class

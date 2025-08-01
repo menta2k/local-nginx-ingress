@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regular HTTP App</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f0f8ff; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 Regular HTTP Application</h1>
+        
+        <p><strong>This is a regular HTTP application for comparison with FastCGI apps.</strong></p>
+        
+        <h2>Application Info</h2>
+        <ul>
+            <li><strong>Application Type:</strong> Static HTML served by nginx</li>
+            <li><strong>Protocol:</strong> HTTP (proxy_pass)</li>
+            <li><strong>Current Time:</strong> <span id="timestamp"></span></li>
+        </ul>
+        
+        <h2>Differences from FastCGI</h2>
+        <ul>
+            <li>Uses <code>proxy_pass</code> instead of <code>fastcgi_pass</code></li>
+            <li>No FastCGI parameters</li>
+            <li>No server-side scripting capabilities</li>
+            <li>Serves static content directly</li>
+        </ul>
+        
+        <p><em>Compare this with the PHP FastCGI applications to see the differences in configuration and capabilities.</em></p>
+        
+        <div style="background: #fff3cd; color: #856404; padding: 15px; margin-top: 20px; border-radius: 5px;">
+            <strong>Note:</strong> This application demonstrates regular HTTP proxying, 
+            while the PHP applications demonstrate FastCGI protocol handling.
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('timestamp').textContent = new Date().toISOString();
+    </script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  # The nginx ingress controller
+  nginx-ingress:
+    build: .
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      # Mount Docker socket for container monitoring
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Mount SSL certificates directory (optional, comment out to use auto-generated certs)
+      # - ./ssl:/etc/nginx/ssl:ro
+      # Mount auth files directory (optional)
+      # - ./auth:/etc/nginx/auth:ro
+      # Persist logs
+      - ./logs:/var/log/nginx
+    environment:
+      - NGINX_CONFIG_PATH=/etc/nginx/conf.d/docker-ingress.conf
+      - NGINX_BINARY=nginx
+    restart: unless-stopped
+    networks:
+      - nginx-ingress
+
+  # Example web application
+  webapp:
+    image: nginx:alpine
+    labels:
+      - "nginx.ingress.enable=true"
+      - "nginx.ingress.host=webapp.local"
+      - "nginx.ingress.port=80"
+      - "nginx.ingress.path=/"
+    volumes:
+      - ./examples/webapp:/usr/share/nginx/html:ro
+    networks:
+      - nginx-ingress
+
+  # Example API service
+  api:
+    image: nginx:alpine
+    labels:
+      - "nginx.ingress.enable=true"
+      - "nginx.ingress.host=api.local"
+      - "nginx.ingress.port=80"
+      - "nginx.ingress.path=/api"
+      - "nginx.ingress.priority=200"
+    volumes:
+      - ./examples/api:/usr/share/nginx/html:ro
+    networks:
+      - nginx-ingress
+
+  # Example SSL-enabled service
+  secure-app:
+    image: nginx:alpine
+    labels:
+      - "nginx.ingress.enable=true"
+      - "nginx.ingress.host=secure.local"
+      - "nginx.ingress.port=80"
+      - "nginx.ingress.path=/"
+      - "nginx.ingress.tls=true"
+      - "nginx.ingress.tls.certname=secure.local"
+    volumes:
+      - ./examples/secure:/usr/share/nginx/html:ro
+    networks:
+      - nginx-ingress
+
+  # Example microservice with health checks
+  microservice:
+    image: nginx:alpine
+    labels:
+      - "nginx.ingress.enable=true"
+      - "nginx.ingress.host=service.local"
+      - "nginx.ingress.port=80"
+      - "nginx.ingress.path=/service"
+      - "nginx.ingress.healthcheck=true"
+      - "nginx.ingress.healthcheck.path=/health"
+      - "nginx.ingress.loadbalancer.method=least_conn"
+    volumes:
+      - ./examples/microservice:/usr/share/nginx/html:ro
+    networks:
+      - nginx-ingress
+
+  # Example CORS-enabled API
+  cors-api:
+    image: nginx:alpine
+    labels:
+      - "nginx.ingress.enable=true"
+      - "nginx.ingress.host=cors-api.local"
+      - "nginx.ingress.port=80"
+      - "nginx.ingress.path=/api/v1"
+      - "nginx.ingress.cors=true"
+      - "nginx.ingress.cors.origins=https://app.local,https://admin.local"
+      - "nginx.ingress.cors.methods=GET,POST,PUT,DELETE"
+    volumes:
+      - ./examples/cors-api:/usr/share/nginx/html:ro
+    networks:
+      - nginx-ingress
+
+networks:
+  nginx-ingress:
+    driver: bridge
